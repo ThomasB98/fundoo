@@ -75,5 +75,7 @@ namespace ModelLayer.Model.DTO
         /// </summary>
         [Required(ErrorMessage = "UserId is required")]
         public int UserId { get; set; }
+
+        public int Id { get; set; }
     }
 }

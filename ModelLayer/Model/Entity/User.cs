@@ -64,5 +64,6 @@ namespace ModelLayer.Model.Entity
         /// </summary>
         [InverseProperty("User")]
         public ICollection<Note> Notes { get; set; } = new List<Note>();
+
     }
 }
