@@ -29,6 +29,7 @@ namespace DataLayer.Utilities.Profiles
             CreateMap<LableCreationRequestDto, Label>();
 
 
+
         }
     }
 }
