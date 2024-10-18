@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataLayer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20241010092808_initialcreation")]
-    partial class initialcreation
+    [Migration("20241015083107_migrationAfterCollraboration")]
+    partial class migrationAfterCollraboration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,6 +23,36 @@ namespace DataLayer.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("ModelLayer.Model.Entity.Collaborator", b =>
+                {
+                    b.Property<int>("NoteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CollaboratorId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created_at")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Updated_at")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("NoteId", "CollaboratorId");
+
+                    b.HasIndex("CollaboratorId");
+
+                    b.ToTable("Collaborator");
+                });
 
             modelBuilder.Entity("ModelLayer.Model.Entity.Note", b =>
                 {
@@ -104,6 +134,25 @@ namespace DataLayer.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("ModelLayer.Model.Entity.Collaborator", b =>
+                {
+                    b.HasOne("ModelLayer.Model.Entity.User", "CollaboratorUser")
+                        .WithMany("CollaboratedNotes")
+                        .HasForeignKey("CollaboratorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ModelLayer.Model.Entity.Note", "Note")
+                        .WithMany("Collaborators")
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CollaboratorUser");
+
+                    b.Navigation("Note");
+                });
+
             modelBuilder.Entity("ModelLayer.Model.Entity.Note", b =>
                 {
                     b.HasOne("ModelLayer.Model.Entity.User", "User")
@@ -115,8 +164,15 @@ namespace DataLayer.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ModelLayer.Model.Entity.Note", b =>
+                {
+                    b.Navigation("Collaborators");
+                });
+
             modelBuilder.Entity("ModelLayer.Model.Entity.User", b =>
                 {
+                    b.Navigation("CollaboratedNotes");
+
                     b.Navigation("Notes");
                 });
 #pragma warning restore 612, 618

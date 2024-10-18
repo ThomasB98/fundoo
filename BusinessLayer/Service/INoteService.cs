@@ -1,17 +1,12 @@
 ﻿using DataLayer.Constants.ResponeEntity;
-using ModelLayer.Model.DTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ModelLayer.Model.DTO.Note;
 
 namespace BusinessLayer.Service
 {
     public interface INoteService
     {
         Task<ResponseBody<bool>> ArchiveNoteAsync(int noteId, bool isArchived);
-        Task<ResponseBody<NoteDto>> CreateNoteAsync(NoteDto noteDto);
+        Task<ResponseBody<NoteResponseDto>> CreateNoteAsync(NoteRequestDto noteRequestDto);
         Task<ResponseBody<bool>> DeleteNoteAsync(int noteId);
         Task<ResponseBody<NoteDto>> GetNoteByIdAsync(int noteId);
         Task<ResponseBody<IEnumerable<NoteDto>>> GetNotesByUserIdAsync(int userId);

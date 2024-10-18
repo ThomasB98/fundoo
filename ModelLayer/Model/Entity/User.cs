@@ -65,5 +65,11 @@ namespace ModelLayer.Model.Entity
         [InverseProperty("User")]
         public ICollection<Note> Notes { get; set; } = new List<Note>();
 
+        public ICollection<Collaborator>? CollaboratedNotes { get; set; }
+
+        public static implicit operator User(Task<User?> v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

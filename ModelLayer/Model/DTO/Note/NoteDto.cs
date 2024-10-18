@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ModelLayer.Model.DTO
+namespace ModelLayer.Model.DTO.Note
 {
     /// <summary>
     /// Represents a Data Transfer Object for the Note entity.

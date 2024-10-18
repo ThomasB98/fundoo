@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using DataLayer.Constants.DBConnection;
 using DataLayer.Constants.ResponeEntity;
-using DataLayer.Constants.Token;
 using DataLayer.Interfaces;
 using ModelLayer.Model.DTO;
 using System;
@@ -12,6 +11,8 @@ using System.Threading.Tasks;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
 using DataLayer.Constants.Exceptions;
+using DataLayer.Utilities.Token;
+using DataLayer.Utilities.Emial;
 
 namespace DataLayer.Repository
 {
@@ -20,6 +21,7 @@ namespace DataLayer.Repository
         private readonly DataContext _context;
         private readonly IMapper _mapper;
         private readonly IJwtToken _jwtToken;
+        private readonly IEmailService _emailService;
 
         public AuthDL(DataContext dataContext,IMapper mapper,IJwtToken jwtToken)
         {
@@ -88,6 +90,63 @@ namespace DataLayer.Repository
                     Data = null,
                     Success = false,
                     Message = "An error occurred: " + ex.Message,
+                    StatusCode = HttpStatusCode.InternalServerError
+                };
+            }
+        }
+
+        public async Task<ResponseBody<bool>> ForgottPasswordAsync(EmailDto emailDto)
+        {
+            var response = new ResponseBody<bool>();
+
+            try
+            {
+                // Check if the emailDto is null or if the email property is null or empty
+                if (emailDto == null || string.IsNullOrWhiteSpace(emailDto.To))
+                {
+                    throw new ArgumentNullException("Email cannot be null or empty.");
+                }
+
+                // Call the email service to send the email
+                var flag = await _emailService.SendEmailAsync(emailDto);
+
+                if (!flag)
+                {
+                    return new ResponseBody<bool>
+                    {
+                        Data = false,
+                        Success = false,
+                        Message = "Invalid email or failed to send email.",
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
+                }
+
+                return new ResponseBody<bool>
+                {
+                    Data = true,
+                    Success = true,
+                    Message = "Check your email for the password reset instructions.",
+                    StatusCode = HttpStatusCode.OK
+                };
+            }
+            catch (ArgumentNullException ex)
+            {
+                return new ResponseBody<bool>
+                {
+                    Data = false,
+                    Success = false,
+                    Message = ex.Message,
+                    StatusCode = HttpStatusCode.BadRequest
+                };
+            }
+            catch (Exception ex)
+            {
+                // Catch all for other exceptions to return a general error message
+                return new ResponseBody<bool>
+                {
+                    Data = false,
+                    Success = false,
+                    Message = $"An error occurred: {ex.Message}",
                     StatusCode = HttpStatusCode.InternalServerError
                 };
             }

@@ -9,7 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataLayer.Constants.Token
+namespace DataLayer.Utilities.Token
 {
     public class JwtToken : IJwtToken
     {

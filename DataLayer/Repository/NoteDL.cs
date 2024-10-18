@@ -1,7 +1,6 @@
 ﻿using DataLayer.Constants.DBConnection;
 using DataLayer.Constants.ResponeEntity;
 using DataLayer.Interfaces;
-using ModelLayer.Model.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +14,7 @@ using DataLayer.Constants.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using ModelLayer.Model.Entity;
 using AutoMapper;
+using ModelLayer.Model.DTO.Note;
 
 namespace DataLayer.Repository
 {
@@ -110,7 +110,7 @@ namespace DataLayer.Repository
         }
 
 
-        public async Task<ResponseBody<NoteDto>> CreateNoteAsync(NoteDto noteDto)
+        public async Task<ResponseBody<NoteResponseDto>> CreateNoteAsync(NoteRequestDto noteRequestDto)
         {
             try
             {
@@ -123,28 +123,25 @@ namespace DataLayer.Repository
 
                 int loggedInUserId = int.Parse(userIdClaim.Value);
 
-                // Validate the note ID
-                if (noteDto==null)
+                if(loggedInUserId !=noteRequestDto.UserId)
                 {
-                    throw new ArgumentException("Invalid note ID provided.");
-                }
-
-                // Fetch the note from the database
-                var userEntity = await _context.User.FirstOrDefaultAsync(n =>n.Id == loggedInUserId);
-                if (userEntity == null)
-                {
-                    throw new UserNotFoundException("user not found");
+                    throw new UnauthorizedAccessException("User is not logged in.");
                 }
                 else
                 {
-                    var noteEntity = _mapper.Map<Note>(noteDto);
+                    var noteEntity = _mapper.Map<Note>(noteRequestDto);
+                    noteEntity.CreatedDate = DateTime.UtcNow;
+                    noteEntity.ModifiedDate = DateTime.UtcNow;
+
                     await _context.Note.AddAsync(noteEntity);
                     int changes = await _context.SaveChangesAsync();
 
+                    var note=await _context.Note.FirstOrDefaultAsync(c=>c.Id==noteEntity.Id);
+
                     if (changes > 0)
                     {
-                        var noteEntityDto=_mapper.Map<NoteDto>(noteEntity);
-                        return new ResponseBody<NoteDto>
+                        var noteEntityDto=_mapper.Map<NoteResponseDto>(note);
+                        return new ResponseBody<NoteResponseDto>
                         {
                             Data = noteEntityDto,
                             Success = true,
@@ -153,7 +150,7 @@ namespace DataLayer.Repository
                         };
                      
                     }
-                    return new ResponseBody<NoteDto>
+                    return new ResponseBody<NoteResponseDto>
                     {
                         Data = null,
                         Success = false,
@@ -167,7 +164,7 @@ namespace DataLayer.Repository
             }
             catch(UserNotFoundException ex)
             {
-                return new ResponseBody<NoteDto>
+                return new ResponseBody<NoteResponseDto>
                 {
                     Data = null,
                     Success = false,
@@ -177,7 +174,7 @@ namespace DataLayer.Repository
             }
             catch (Exception ex)
             {
-                return new ResponseBody<NoteDto>
+                return new ResponseBody<NoteResponseDto>
                 {
                     Data = null,
                     Success = false,

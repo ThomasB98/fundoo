@@ -1,5 +1,5 @@
 ﻿using DataLayer.Constants.ResponeEntity;
-using ModelLayer.Model.DTO;
+using ModelLayer.Model.DTO.Note;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +13,9 @@ namespace DataLayer.Interfaces
         /// <summary>
         /// Creates a new note asynchronously.
         /// </summary>
-        /// <param name="noteDto">The DTO containing note data.</param>
+        /// <param name="noteRequestDto">The DTO containing note data.</param>
         /// <returns>A response containing the created note.</returns>
-        Task<ResponseBody<NoteDto>> CreateNoteAsync(NoteDto noteDto);
+        Task<ResponseBody<NoteResponseDto>> CreateNoteAsync(NoteRequestDto noteRequestDto);
 
         /// <summary>
         /// Retrieves a note by its ID asynchronously.

@@ -19,5 +19,7 @@ namespace DataLayer.Interfaces
         /// <param name="login">Login DTO with credentials.</param>
         /// <returns>A token if authentication is successful.</returns>
         Task<ResponseBody<string>> AuthenticateAsync(LoginDto login);
+
+        Task<ResponseBody<bool>> ForgottPasswordAsync(EmailDto emailDto);
     }
 }

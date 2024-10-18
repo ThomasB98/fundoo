@@ -7,11 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataLayer.Constants.Profiles
+namespace DataLayer.Utilities.Profiles
 {
     public class UserProfile : Profile
     {
-        public UserProfile() {
+        public UserProfile()
+        {
             CreateMap<User, UserDto>();
             CreateMap<UserDto, User>();
         }

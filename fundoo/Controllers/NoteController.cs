@@ -1,7 +1,7 @@
 ﻿using BusinessLayer.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ModelLayer.Model.DTO;
+using ModelLayer.Model.DTO.Note;
 
 namespace fundoo.Controllers
 {
@@ -18,11 +18,11 @@ namespace fundoo.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateNoteAsync([FromBody] NoteDto noteDto)
+        public async Task<IActionResult> CreateNoteAsync([FromBody] NoteRequestDto noteRequestDto)
         {
             if(ModelState.IsValid)
             {
-                var response = await _noteService.CreateNoteAsync(noteDto);
+                var response = await _noteService.CreateNoteAsync(noteRequestDto);
                 if (response.Success)
                 {
                     return Ok(response);
